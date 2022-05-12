@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+
+  database:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - ./data/mysql/var/lib/mysql:/var/lib/mysql
+      - ./data/mysql/etc/mysql:/etc/mysql
+
+  wordpress:
+    depends_on:
+      - database
+    links:
+      - database
+    image: wordpress:5.7-php7.4-apache
+    ports:
+      - "8080:80"
+      - "8443:443"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    volumes:
+      - ./data/wordpress/var/www/html:/var/www/html
+
+volumes:
+  wordpress:
+  database:
